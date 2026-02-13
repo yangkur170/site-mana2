@@ -114,29 +114,24 @@ LOGIN_URL = "/login/"
 # ======================
 # STATIC / MEDIA
 # ======================
-# ======================
-# STATIC / MEDIA
-# ======================
 STATIC_URL = "/static/"
-
-# where YOUR source static files live (Loan_site/static/)
 STATICFILES_DIRS = [BASE_DIR / "static"]
-
-# where collectstatic puts files in production (Railway)
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = "/media/"
+# ✅ QUICK FIX: serve static directly from /static folder (no need collectstatic)
+WHITENOISE_USE_FINDERS = True
 
-# Django 4+ storages (use whitenoise for static)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
-    # ✅ IMPORTANT: NO manifest (prevents “Missing staticfiles manifest entry” 500)
+    # ✅ avoid Manifest errors + serve fast
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
+MEDIA_URL = "/media/"
 
 # ======================
 # CLOUDINARY (ONE SOURCE OF TRUTH)
