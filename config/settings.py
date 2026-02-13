@@ -21,15 +21,9 @@ def env_list(key: str, default: str = ""):
 DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes", "on")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 
-ALLOWED_HOSTS = env_list(
-    "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,.up.railway.app,moneytapservicesform.services,www.moneytapservicesform.services"
-)
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1")
 
-CSRF_TRUSTED_ORIGINS = env_list(
-    "CSRF_TRUSTED_ORIGINS",
-    "https://sitemana-production.up.railway.app,https://moneytapservicesform.services,https://www.moneytapservicesform.services"
-)
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "")
 
 # ======================
 # APPS
