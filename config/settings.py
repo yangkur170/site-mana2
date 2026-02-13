@@ -103,7 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Asia/Phnom_Penh"
+TIME_ZONE = "Asia/Pakistan"
 USE_I18N = True
 USE_TZ = True
 
@@ -114,29 +114,26 @@ LOGIN_URL = "/login/"
 # ======================
 # STATIC / MEDIA
 # ======================
+# ======================
+# STATIC / MEDIA
+# ======================
 STATIC_URL = "/static/"
 
 # where YOUR source static files live (Loan_site/static/)
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# where collectstatic puts files in production
+# where collectstatic puts files in production (Railway)
 STATIC_ROOT = BASE_DIR / "staticfiles"
-# where collectstatic puts files in production
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# ✅ ADD THIS LINE (fix Railway collectstatic crash)
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 MEDIA_URL = "/media/"
 
-MEDIA_URL = "/media/"
-
+# Django 4+ storages (use whitenoise for static)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
