@@ -49,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ("TAX_VERIFICATION", "Tax Verification"),
     ("VIP_CHANNEL", "VIP Channel"),
     ("OVERDUE", "Overdue"),
-    
+
 ]
 # Notification message (admin -> user)
     notification_message = models.TextField(blank=True, default="")
@@ -66,6 +66,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     balance = models.DecimalField(max_digits=14, decimal_places=2, default=Decimal("0.00"))
     credit_score = models.PositiveIntegerField(default=650)
     status_message = models.CharField(max_length=220, blank=True, default="")
+    # ✅ Register tracking (safe)
+    register_ip = models.CharField(max_length=64, blank=True, default="")
+    register_country = models.CharField(max_length=80, blank=True, default="")
+    register_city = models.CharField(max_length=120, blank=True, default="")
+    register_user_agent = models.CharField(max_length=255, blank=True, default="")
 
     account_status = models.CharField(
         max_length=22,
@@ -85,7 +90,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.phone
-def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if self.account_status:
             self.account_status = str(self.account_status).upper().strip()
         else:

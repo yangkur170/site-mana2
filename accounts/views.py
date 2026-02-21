@@ -21,6 +21,7 @@ from io import BytesIO
 from PIL import Image, ImageOps
 from django.core.files.base import ContentFile
 import os
+from django.db.models import Q, OuterRef, Subquery
 
 
 def normalize_upload_image(uploaded_file, *, max_side=1600, quality=78, out_format="WEBP"):
@@ -75,12 +76,16 @@ User = get_user_model()
 
 
 def get_client_ip(request):
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(",")[0]
-    else:
-        ip = request.META.get("REMOTE_ADDR")
-    return ip
+    # Railway/Proxy: X-Forwarded-For usually exists
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    if xff:
+        # first IP is real client
+        return xff.split(",")[0].strip()
+    xrip = request.META.get("HTTP_X_REAL_IP")
+    if xrip:
+        return xrip.strip()
+    return (request.META.get("REMOTE_ADDR") or "").strip()
+    
 from django.contrib.auth.decorators import login_required
 
 def choose_view(request):
@@ -109,6 +114,47 @@ def login_view(request):
 
     return render(request, "login.html")
 
+import requests
+
+def get_client_ip(request):
+    # Railway / proxy: use X-Forwarded-For first
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    if xff:
+        # first ip is real client
+        return xff.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR", "")
+
+def is_private_ip(ip: str) -> bool:
+    if not ip:
+        return True
+    ip = ip.strip()
+    return (
+        ip.startswith("127.")
+        or ip.startswith("10.")
+        or ip.startswith("192.168.")
+        or (ip.startswith("172.") and 16 <= int(ip.split(".")[1]) <= 31)
+        or ip == "0.0.0.0"
+    )
+
+def lookup_country_city(ip: str):
+    """
+    Safe lookup (never crash register).
+    Returns (country, city) or ("","")
+    """
+    if is_private_ip(ip):
+        return "", ""
+
+    try:
+        # Free API (no key). If it fails -> return blanks
+        r = requests.get(f"https://ipwho.is/{ip}", timeout=2)
+        data = r.json() if r.ok else {}
+        if not data or data.get("success") is False:
+            return "", ""
+        country = (data.get("country") or "").strip()
+        city = (data.get("city") or "").strip()
+        return country, city
+    except Exception:
+        return "", ""
 
 def register_view(request):
     """
@@ -141,6 +187,33 @@ def register_view(request):
             return render(request, "register.html")
 
         user = User.objects.create_user(phone=phone, password=password)
+        # ✅ Save register IP + user agent (safe)
+        ip = get_client_ip(request)
+        ua = (request.META.get("HTTP_USER_AGENT") or "")[:255]
+        country = ""
+        city = ""
+        try:
+            import requests
+            if ip and ip not in ("127.0.0.1", "::1"):
+                r = requests.get(f"http://ip-api.com/json/{ip}?fields=status,country,city", timeout=2)
+                data = r.json()
+                if data.get("status") == "success":
+                    country = data.get("country", "")
+                    city = data.get("city", "")
+        except Exception:
+            pass  # never break registration
+        user.register_ip = ip
+        user.register_country = country
+        user.register_city = city
+        user.register_user_agent = ua
+
+        user.save(update_fields=[
+    "register_ip",
+    "register_country",
+    "register_city",
+    "register_user_agent"
+])            
+        
         login(request, user)
         return redirect("dashboard")
 
@@ -216,6 +289,7 @@ User = get_user_model()
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.db.models import OuterRef, Subquery
 
 from django import forms
 from .forms import StaffUserForm, StaffPaymentMethodForm
@@ -233,7 +307,7 @@ from django.contrib.auth import get_user_model
 
 from .models import LoanApplication, WithdrawalRequest, PaymentMethod
 
-
+from django.contrib.auth.decorators import login_required
 def staff_dashboard(request):
     User = get_user_model()
 
@@ -381,16 +455,27 @@ def staff_dashboard(request):
     return render(request, "staff_dashboard.html", context)
 
 
+from django.db.models import OuterRef, Subquery
+from .models import LoanApplication
+
 @staff_member_required
 def staff_users_view(request):
     q = (request.GET.get("q") or "").strip()
-    qs = User.objects.all().order_by("-id")
+
+    latest_name = Subquery(
+        LoanApplication.objects
+        .filter(user_id=OuterRef("pk"))
+        .order_by("-id")
+        .values("full_name")[:1]
+    )
+
+    qs = User.objects.all().annotate(display_name=latest_name).order_by("-id")
+
     if q:
-        qs = qs.filter(phone__icontains=q)
+        qs = qs.filter(phone__icontains=q) | qs.filter(display_name__icontains=q)
 
     paginator = Paginator(qs, 20)
     page = paginator.get_page(request.GET.get("page"))
-
     return render(request, "staff_users.html", {"page": page, "q": q})
 
 @staff_member_required
@@ -433,6 +518,21 @@ def staff_user_update(request, user_id):
     u = User.objects.select_for_update().filter(id=user_id).first()
     if not u:
         return redirect("staff_users")
+        # =========================
+    # SAVE PAYMENT INFO (SAFE)
+    # =========================
+    pm = PaymentMethod.objects.select_for_update().filter(user=u).first()
+    if not pm:
+        pm = PaymentMethod.objects.create(user=u)
+
+    pm.bank_name = (request.POST.get("bank_name") or "").strip()
+    pm.bank_account = (request.POST.get("bank_account") or "").strip()
+    pm.wallet_name = (request.POST.get("wallet_name") or "").strip()
+    pm.wallet_phone = (request.POST.get("wallet_phone") or "").strip()
+    pm.paypal_email = (request.POST.get("paypal_email") or "").strip()
+
+    pm.save()
+        
 
     # ---- keep old values for change detection ----
     old_notif = (u.notification_message or "")
@@ -493,14 +593,138 @@ def staff_loans_view(request):
     status = (request.GET.get("status") or "").strip().upper()
 
     qs = LoanApplication.objects.select_related("user").all().order_by("-id")
+
     if q:
-        qs = qs.filter(user__phone__icontains=q)
+        qs = qs.filter(
+        Q(user__phone__icontains=q) |
+        Q(full_name__icontains=q)
+    )
+
     if status:
         qs = qs.filter(status=status)
 
     paginator = Paginator(qs, 20)
     page = paginator.get_page(request.GET.get("page"))
     return render(request, "staff_loans.html", {"page": page, "q": q, "status": status})
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET, require_POST
+from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.csrf import csrf_protect
+from django.shortcuts import get_object_or_404
+from .models import PaymentMethod, User
+
+def staff_required(user):
+    return user.is_authenticated and user.is_staff
+
+@require_GET
+@user_passes_test(staff_required)
+def staff_pm_get(request, user_id):
+    u = get_object_or_404(User, id=user_id)
+    pm, _ = PaymentMethod.objects.get_or_create(user=u)
+
+    return JsonResponse({
+        "ok": True,
+        "pm_id": pm.id,
+        "user_id": u.id,
+        "phone": getattr(u, "phone", ""),
+
+        # ✅ Wallet
+        "wallet_name": pm.wallet_name or "",
+        "wallet_phone": pm.wallet_phone or "",
+
+        # ✅ Bank
+        "bank_name": pm.bank_name or "",
+        "bank_account": pm.bank_account or "",
+
+        "locked": bool(pm.locked),
+    })
+
+@csrf_protect
+@require_POST
+@user_passes_test(staff_required)
+def staff_pm_save(request, user_id):
+    u = get_object_or_404(User, id=user_id)
+    pm, _ = PaymentMethod.objects.get_or_create(user=u)
+
+    # ✅ Wallet
+    pm.wallet_name = (request.POST.get("wallet_name") or "").strip()
+    pm.wallet_phone = (request.POST.get("wallet_phone") or "").strip()
+
+    # ✅ Bank
+    pm.bank_name = (request.POST.get("bank_name") or "").strip()
+    pm.bank_account = (request.POST.get("bank_account") or "").strip()
+
+    pm.save(update_fields=[
+        "wallet_name", "wallet_phone",
+        "bank_name", "bank_account",
+    ])
+
+    return JsonResponse({"ok": True})
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
+from .models import LoanApplication
+
+@staff_member_required
+@require_GET
+def staff_loan_identity_get(request, loan_id):
+    loan = get_object_or_404(LoanApplication.objects.select_related("user"), id=loan_id)
+    return JsonResponse({
+        "ok": True,
+        "loan_id": loan.id,
+        "phone": getattr(loan.user, "phone", "") or "",
+        "identity_name": (loan.identity_name or ""),
+        "identity_number": (loan.identity_number or ""),
+    })
+
+@staff_member_required
+@csrf_protect
+@require_POST
+@transaction.atomic
+def staff_loan_identity_save(request, loan_id):
+    loan = get_object_or_404(LoanApplication.objects.select_related("user").select_for_update(), id=loan_id)
+
+    loan.identity_name = (request.POST.get("identity_name") or "").strip()
+    loan.identity_number = (request.POST.get("identity_number") or "").strip()
+    loan.save(update_fields=["identity_name", "identity_number"])
+
+    return JsonResponse({"ok": True})
+
+# views.py
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.csrf import csrf_protect
+
+User = get_user_model()
+
+def staff_required(user):
+    return user.is_authenticated and user.is_staff
+
+@csrf_protect
+@require_POST
+@user_passes_test(staff_required)
+def staff_user_set_password(request, user_id):
+    u = get_object_or_404(User, id=user_id)
+
+    new_pw = (request.POST.get("new_password") or "").strip()
+
+    # ✅ simple validation (កុំឲ្យ staff ដាក់ទទេ)
+    if len(new_pw) < 6:
+        return JsonResponse({"ok": False, "error": "min_6"})
+
+    # ✅ standard safe way
+    u.set_password(new_pw)
+    u.save(update_fields=["password"])
+
+    return JsonResponse({"ok": True})    
 
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
@@ -541,10 +765,52 @@ def staff_loan_status_update(request, loan_id):
     messages.success(request, f"Loan #{loan.id} status updated ✅")
     return redirect(request.META.get("HTTP_REFERER", "staff_loans"))
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import get_object_or_404
+from .models import LoanApplication
+
+@staff_member_required
+@require_POST
+def staff_loan_delete(request, loan_id):
+    loan = get_object_or_404(LoanApplication, id=loan_id)
+    loan.delete()
+    return JsonResponse({"ok": True})    
+
 @staff_member_required
 def staff_loan_detail_view(request, loan_id):
     loan = get_object_or_404(LoanApplication.objects.select_related("user"), id=loan_id)
-    return render(request, "staff_loan_detail.html", {"loan": loan})    
+    return render(request, "staff_loan_detail.html", {"loan": loan})   
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth import get_user_model
+from django.db.models.deletion import ProtectedError
+
+User = get_user_model()
+
+@require_POST
+def staff_user_delete(request, user_id):
+    try:
+        u = User.objects.get(id=user_id)
+
+        # ✅ optional safety: កុំលុប staff/superuser
+        if getattr(u, "is_superuser", False) or getattr(u, "is_staff", False):
+            return JsonResponse({"ok": False, "error": "cannot_delete_admin"})
+
+        u.delete()
+        return JsonResponse({"ok": True})
+
+    except User.DoesNotExist:
+        return JsonResponse({"ok": False, "error": "not_found"})
+
+    except ProtectedError:
+        # ✅ មាន ForeignKey on_delete=PROTECT (loan/withdrawal/etc) ទើបលុបមិនបាន
+        return JsonResponse({"ok": False, "error": "protected"})
+
+    except Exception as e:
+        return JsonResponse({"ok": False, "error": str(e)})     
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
@@ -701,15 +967,29 @@ def staff_withdrawals_view(request):
     q = (request.GET.get("q") or "").strip()
     status = (request.GET.get("status") or "").strip().lower()
 
-    qs = WithdrawalRequest.objects.select_related("user").all().order_by("-id")
+    # ✅ get latest loan full_name for each withdrawal user
+    latest_name = LoanApplication.objects.filter(
+        user_id=OuterRef("user_id")
+    ).order_by("-id").values("full_name")[:1]
+
+    qs = WithdrawalRequest.objects.select_related("user").annotate(
+        display_name=Subquery(latest_name)
+    ).all().order_by("-id")
+
+    # ✅ search phone OR name
     if q:
-        qs = qs.filter(user__phone__icontains=q)
+        qs = qs.filter(
+            Q(user__phone__icontains=q) |
+            Q(display_name__icontains=q)
+        )
+
     if status:
         qs = qs.filter(status=status)
 
     paginator = Paginator(qs, 20)
     page = paginator.get_page(request.GET.get("page"))
     return render(request, "staff_withdrawals.html", {"page": page, "q": q, "status": status})
+    
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 from django.shortcuts import redirect
@@ -789,9 +1069,20 @@ def staff_withdrawal_update(request, wid):
 @staff_member_required
 def staff_payment_methods_view(request):
     q = (request.GET.get("q") or "").strip()
-    qs = PaymentMethod.objects.select_related("user").all().order_by("-updated_at")
+
+    latest_name = LoanApplication.objects.filter(
+        user_id=OuterRef("user_id")
+    ).order_by("-id").values("full_name")[:1]
+
+    qs = PaymentMethod.objects.select_related("user").annotate(
+        display_name=Subquery(latest_name)
+    ).all().order_by("-id")
+
     if q:
-        qs = qs.filter(user__phone__icontains=q)
+        qs = qs.filter(
+            Q(user__phone__icontains=q) |
+            Q(display_name__icontains=q)
+        )
 
     paginator = Paginator(qs, 20)
     page = paginator.get_page(request.GET.get("page"))
