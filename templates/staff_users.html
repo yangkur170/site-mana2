@@ -1,5 +1,5 @@
 {% extends "staff_base.html" %}
-{% block title %}Staff - Users{% endblock %}
+{% load humanize %}
 
 {% block content %}
   <div class="card-h">
@@ -15,6 +15,7 @@
   </div>
 
   <div class="content">
+  <div class="table-wrap">
     <table class="users-table">
       <thead>
         <tr>
@@ -60,12 +61,12 @@
             
               <!-- 4) BALANCE -->
               <td class="balance-cell">
-                <input name="balance"
-                       value="{{ u.balance }}"
-                       form="uform-{{ u.id }}"
-                       class="balance-input"
-                       autocomplete="off">
-              </td>
+  <input name="balance"
+         value="{{ u.balance|floatformat:2|intcomma }}"
+         form="uform-{{ u.id }}"
+         class="balance-input"
+         autocomplete="off">
+</td>
 
 <!-- ✅ NEW REGISTER INFO (readonly display) -->
 <td>{{ u.register_ip|default:"-" }}</td>
@@ -169,6 +170,7 @@
         0 10px 22px rgba(0,0,0,.35),
         0 0 18px rgba(239,68,68,.22) !important;
     }
+    
   </style>
   
   <script>
@@ -406,12 +408,12 @@ td.col-active .active-select{
   text-align: left !important; /* ឬ center បើបងចង់ */
 }
 
-/* ✅ BALANCE column (4th) smaller */
+/* ✅ BALANCE column: allow fit long numbers */
 .users-table th:nth-child(4),
 .users-table td:nth-child(4){
-  width: 110px !important;     /* ប្រែជា 90/100/120 តាមចិត្ត */
-  min-width: 110px !important;
-  max-width: 110px !important;
+  width: auto !important;
+  min-width: 160px !important;   /* បងអាចដាក់ 150/180 */
+  max-width: none !important;
 }
 
 /* ✅ BALANCE BIGGER FONT (same level as register IP) */
@@ -423,12 +425,16 @@ td.col-active .active-select{
 .users-table td.balance-cell input.balance-input{
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 6px 8px !important;
+  padding: 6px 6px !important;
   text-align: center !important;
 
-  font-size: 15px !important;
+  font-size: 16px !important;        /* ✅ តូចបន្តិច ដើម្បី fit */
   font-weight: 900 !important;
   color: #0b3b66 !important;
+
+  white-space: nowrap !important;     /* ✅ មិនឲ្យចុះបន្ទាត់ */
+  overflow: visible !important;       /* ✅ មិនកាត់ចុង */
+  text-overflow: clip !important;     /* ✅ មិន ... */
 }
 
 /* ✅ STATUS column (9th) wider */
@@ -452,6 +458,27 @@ td.col-active .active-select{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ===========================
+   USERS PAGE: PHONE = RED ONLY
+   (no background, no box)
+   =========================== */
+
+/* ===== USERS PHONE COLUMN ===== */
+
+.users-table td.phone a.u-link{
+  color: #d10f0f !important;
+  font-weight:900 !important;
+}
+
+/* optional hover */
+.users-table td.phone a.u-link:hover{
+  opacity:.85;
+}
+
+.dashboard-card table.users-table tbody td.phone a.u-link:hover{
+  text-decoration: underline !important;
 }
 </style>
 
