@@ -136,32 +136,6 @@
 }
 
 
-  /* ===== Account Status Badge ===== */
-.status-badge{
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: .5px;
-}
-
-/* ACTIVE */
-.status-active{
-  background: #16a34a; /* green */
-  color: #fff;
-}
-
-/* FROZEN / ERROR / REJECT */
-.status-danger{
-  background: #dc2626; /* red */
-  color: #fff;
-}
-/* WARNING / YELLOW */
-.status-warn{
-  background: #eab308; /* yellow strong */
-  color: #111;         /* readable */
-}
   /* if base.html uses wrapper flex causing “twist” */
   .wrap{
     padding-top:0 !important;
@@ -668,9 +642,7 @@
   background: rgba(0,0,0,.72) !important;
 }
 
-/* ✅ FORCE badge color (prevent CSS override) */
-#accStatusBadge.status-active { background:#16a34a !important; color:#fff !important; }
-#accStatusBadge.status-warn   { background:#eab308 !important; color:#111 !important; }
+
 /* ===== GREEN PRO GLOW THEME ===== */
 :root{
   --g-dark:#0E5F2F;
@@ -732,7 +704,6 @@
   background: var(--g-bright);
   box-shadow: 0 0 12px rgba(107,255,42,.7);
 }
-#accStatusBadge.status-danger { background:#dc2626 !important; color:#fff !important; }
 
 /* =========================
    ✅ NEW NAV GRID (2x2 under profile)
@@ -856,21 +827,9 @@
       <div class="amount">PKR <span data-balance>{{ request.user.balance|default:"0.00" }}</span></div>
       <div class="muted" style="margin-top:6px;">
         {# Dashboard status badge #}
-        {% with raw=request.user.account_status|default:""|upper %}
-  {% with key=raw|cut:" "|cut:"_" %}
-    <span id="accStatusBadge"
-          class="status-badge
-            {% if key == 'ACTIVE' or key == 'ACCOUNTUPDATED' or key == 'LOANPAID' or key == 'WITHDRAWALSUCCESSFUL' %}
-              status-active
-            {% elif key == 'APPMAINTENANCE' %}
-              status-warn
-            {% else %}
-              status-danger
-            {% endif %}">
-      {{ raw }}
-    </span>
-  {% endwith %}
-{% endwith %}
+        <span id="accStatusBadge" class="status-badge status-green">
+  {{ request.user.account_status|default:"Active" }}
+</span>
       </div>      
     </div>
   </div>

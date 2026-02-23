@@ -39,17 +39,32 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
 
     ACCOUNT_STATUS_CHOICES = [
-    ("ACTIVE", "Active"),
-    ("FROZEN", "Frozen"),
-    ("REJECTED", "Rejected"),
-    ("NEW_OTP_CODE", "New OTP code"),
-    ("INVALID_BANK_ACCOUNT", "Invalid bank account number"),
-    ("LOW_CREDIT_SCORE", "Low Credit Score"),
-    ("NEW_DOCUMENTS_REQUIRED", "New Documents Required"),
-    ("TAX_VERIFICATION", "Tax Verification"),
-    ("VIP_CHANNEL", "VIP Channel"),
-    ("OVERDUE", "Overdue"),
 
+    # ✅ GREEN
+    ("Active", "Active"),
+    ("Account Updated", "Account Updated"),
+    ("Loan Paid", "Loan Paid"),
+    ("Withdrawal Successful", "Withdrawal Successful"),
+
+    # ✅ YELLOW
+    ("App Maintenance", "App Maintenance"),
+    ("Invalid Detail", "Invalid Detail"),
+
+    # ✅ RED
+    ("LOCKED", "LOCKED"),
+    ("BANNED", "BANNED"),
+    ("FROZEN", "FROZEN"),
+    ("Low Credit", "Low Credit"),
+    ("Renew Document Required", "Renew Document Required"),
+    ("Renew OTP Code", "Renew OTP Code"),
+    ("Renew Document & OTP code", "Renew Document & OTP code"),
+    ("Overdue Record", "Overdue Record"),
+    ("Repayment Ability", "Repayment Ability"),
+    ("VIP Channel", "VIP Channel"),
+    ("Purchase Life Insurance", "Purchase Life Insurance"),
+    ("Tax Verification", "Tax Verification"),
+    ("Platform Fee", "Platform Fee"),
+    ("AMLC Warning", "AMLC Warning"),
 ]
 # Notification message (admin -> user)
     notification_message = models.TextField(blank=True, default="")
@@ -73,10 +88,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     register_user_agent = models.CharField(max_length=255, blank=True, default="")
 
     account_status = models.CharField(
-        max_length=22,
-        choices=ACCOUNT_STATUS_CHOICES,
-        default="ACTIVE"
-    )
+    max_length=50,
+    choices=ACCOUNT_STATUS_CHOICES,
+    default="Active"
+)
 
     withdraw_otp = models.CharField(max_length=10, blank=True, default="")
 
@@ -90,12 +105,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.phone
-    def save(self, *args, **kwargs):
-        if self.account_status:
-            self.account_status = str(self.account_status).upper().strip()
-        else:
-            self.account_status = "ACTIVE"
-        super().save(*args, **kwargs)
+def save(self, *args, **kwargs):
+    if not self.account_status:
+        self.account_status = "Active"
+    self.account_status = str(self.account_status).strip()
+    super().save(*args, **kwargs)
 
 
 class LoanConfig(models.Model):

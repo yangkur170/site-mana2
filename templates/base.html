@@ -68,22 +68,30 @@ body{ padding-bottom: calc(var(--bar-h) + var(--bar-gap)); }
   justify-content:center;
   padding:6px 16px;
   border-radius:999px;
-  font-weight:800;
+  font-weight:900;
   font-size:13px;
   letter-spacing:.6px;
   text-transform:uppercase;
 }
 
-/* ACTIVE (dashboard green) */
-.status-active{
-  background: linear-gradient(180deg,#16a34a,#0f7a3a);
+/* GREEN */
+.status-green{
+  background: linear-gradient(180deg,#16a34a,#0E5F2F);
   color:#ecfdf5;
   box-shadow: 0 0 0 1px rgba(34,197,94,.45),
               0 6px 18px rgba(34,197,94,.35);
 }
 
-/* FROZEN / REJECT / ERROR (dashboard red) */
-.status-danger{
+/* YELLOW */
+.status-yellow{
+  background: linear-gradient(180deg,#f59e0b,#b45309);
+  color:#fff7ed;
+  box-shadow: 0 0 0 1px rgba(245,158,11,.55),
+              0 6px 18px rgba(245,158,11,.35);
+}
+
+/* RED */
+.status-red{
   background: linear-gradient(180deg,#dc2626,#991b1b);
   color:#fff;
   box-shadow: 0 0 0 1px rgba(239,68,68,.55),
@@ -510,17 +518,53 @@ function flowBack() {
     .replace(/\b\w/g, c => c.toUpperCase());
 }
 
+function normalizeStatus(s){
+  return String(s || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function niceLabel(s){
+  if(!s) return "Active";
+  // keep words but title-case for UI
+  return String(s)
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function getStatusColorClass(statusRaw){
+  const st = normalizeStatus(statusRaw);
+
+  const GREEN = new Set([
+    "active",
+    "account updated",
+    "loan paid",
+    "withdrawal successful"
+  ]);
+
+  const YELLOW = new Set([
+    "app maintenance",
+    "invalid detail",
+    "renew document required"
+  ]);
+
+  // everything else = RED by your structure
+  if (GREEN.has(st)) return "status-green";
+  if (YELLOW.has(st)) return "status-yellow";
+  return "status-red";
+}
+
 function updateAccountStatus(status){
   const badge = document.getElementById("accStatusBadge");
   if(!badge) return;
 
-  const st = (status || "active").toLowerCase();
+  badge.textContent = niceLabel(status);
 
-  // ✅ nice label (no _)
-  badge.textContent = formatStatusText(st);
-
-  badge.classList.remove("status-active","status-danger");
-  badge.classList.add(st === "active" ? "status-active" : "status-danger");
+  badge.classList.remove("status-green","status-yellow","status-red");
+  badge.classList.add(getStatusColorClass(status));
 }
   
     function applyState(data){
@@ -533,18 +577,63 @@ function updateAccountStatus(status){
       updateAccountStatus(data.account_status);
       const alertBox = document.getElementById("statusAlert");
 if(alertBox){
-  const st = (data.account_status || "active").toLowerCase();
-  const msg = (data.status_message || "").trim();
+  const st = normalizeStatus(data.account_status);
+  const msg = String(data.status_message || "").trim();
 
-  if(st === "active"){
-    alertBox.style.display = "none";
-    alertBox.textContent = "";
-  }else{
+  const HIDE_SET = new Set([
+    "active",
+    "account updated"
+  ]);
+
+  const CONTACT_SET = new Set([
+    "amlc warning",
+    "platform fee",
+    "tax verification",
+    "purchase life insurance",
+    "vip channel",
+    "repayment ability",
+    "overdue record",
+    "renew document & otp code",
+    "renew otp code",
+    "renew document required",
+    "low credit",
+    "invalid detail",
+    "frozen"
+  ]);
+
+  const SUCCESS_SET = new Set([
+    "withdrawal successful",
+    "loan paid"
+  ]);
+
+  // reset
+  alertBox.classList.remove("status-danger","status-warn","status-active","status-green","status-yellow","status-red");
+  alertBox.style.display = "none";
+  alertBox.textContent = "";
+
+  // ✅ HIDE (no alert)
+  if(HIDE_SET.has(st)){
+    // do nothing
+  }
+  // ✅ SUCCESS => GREEN + Congratulations
+  else if(SUCCESS_SET.has(st)){
     alertBox.style.display = "block";
-    alertBox.textContent = msg || ("Your account is " + formatStatusText(st) + ". Please contact company department.");
+    alertBox.classList.add("status-green");
+    alertBox.textContent = msg || "Congratulations 🎉";
+  }
+  // ✅ CONTACT => color by your system + show msg + contact text
+  else if(CONTACT_SET.has(st)){
+    alertBox.style.display = "block";
+    alertBox.classList.add(getStatusColorClass(st));
+    alertBox.textContent = (msg ? msg + " — " : "") + "Please contact to company department.";
+  }
+  // ✅ other non-hide => RED default contact
+  else{
+    alertBox.style.display = "block";
+    alertBox.classList.add("status-red");
+    alertBox.textContent = (msg ? msg + " — " : "") + "Please contact to company department.";
   }
 }
-  
       // ✅ balance realtime (only update when changed)
       const balEl = document.querySelector("[data-balance]");
       if(balEl && data.balance !== undefined && data.balance !== lastBalance){
