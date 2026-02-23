@@ -22,6 +22,8 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes", "on")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 
 ALLOWED_HOSTS = [
+    "localhost,127.0.0.1, site-mana2-production-01a9.up.railway.app",
+    "127.0.0.1",
     "site-mana2-production-01a9.up.railway.app",
     "moneytapservicesform.services",
     "www.moneytapservicesform.services",
