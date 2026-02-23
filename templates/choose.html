@@ -12,6 +12,29 @@
   body, body * {
     font-family: 'Ovelion', sans-serif !important;
   }
+  .company-credit{
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .02em;
+
+  color: rgba(255,255,255,.65);
+
+  /* ✅ IMPORTANT FIX */
+  white-space: nowrap;     /* force single line */
+  line-height: 1.4;        /* prevent overlap */
+  display: block;
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  z-index: 20;
+}
   </style>
 <div class="card card-premium">
 
@@ -56,5 +79,9 @@
     Trusted • 24/7 support
   </small>
 
+</div>
+
+<div class="company-credit">
+  © 2026 ZANDA Financial (Private) Limited Company.
 </div>
 {% endblock %}
