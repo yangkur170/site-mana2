@@ -42,10 +42,10 @@
     #e6eef7 100%
   );
 
-  border: 1px solid #004182;
+  border: 1px solid #0E5F2F;
   box-shadow:
     0 8px 20px rgba(0, 0, 0, 0.15),
-    0 0 0 4px rgba(0, 65, 130, 0.08);
+    0 0 0 4px rgba(14, 95, 47, 0.10);
 
   color: #1a1a1a;   /* អក្សរខ្មៅដូចក្រដាស */
 }
@@ -53,25 +53,21 @@
 /* Header inside agreement */
 .agree-card h1,
 .agree-card h2{
-  color: #004182;
+  color: #0E5F2F;
   font-weight: 700;
   margin-top: 28px;
 }
 
 /* Strong / highlight */
 .agree-card strong{
-  color: #054585d0;
+  color: #1E8E3E;
 }
 
 /* HR line */
 .agree-card hr{
   border: none;
   height: 2px;
-  background: linear-gradient(
-    to right,
-    #004182,
-    #054585d0
-  );
+  background: linear-gradient(to right, #0E5F2F, #1E8E3E);
   margin: 28px 0;
 }
 
@@ -205,14 +201,54 @@
   margin-bottom: 6px;
 }
 .art-title{
-  color: #004182;          /* Blue like image 2 */
+  color: #0E5F2F;          /* Blue like image 2 */
   font-weight: 900;
   letter-spacing: .4px;
   text-transform: uppercase;
 }
 
 .art-title:hover{
-  color: #054585d0;
+  color: #0E5F2F;
+}
+/* ===== Back button (same as wallet) ===== */
+:root{
+  --g1:#0E5F2F;
+  --g2:#1E8E3E;
+  --silver: rgba(192,192,192,0.904);
+  --shadowA: 0 0 10px rgba(10,10,9,0.788);
+  --shadowB: 0 14px 10px rgba(0,0,0,0.815);
+  --shadow: var(--shadowA), var(--shadowB);
+}
+
+.top-actions{
+  margin-top: 12px;
+  display:flex;
+  justify-content:flex-start;
+}
+
+.back-btn{
+  height: 42px;
+  padding: 0 22px;
+  border-radius: 12px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  background: linear-gradient(90deg, var(--g1), var(--g2));
+  color:#fff;
+  font-weight: 900;
+  text-decoration:none;
+
+  border: 2px solid var(--silver);
+  box-shadow: var(--shadow);
+}
+
+.back-btn:hover{ transform: translateY(-1px); }
+.back-btn:active{ transform: translateY(0); opacity:.92; }
+
+@media (max-width:520px){
+  .back-btn{ height: 40px; padding: 0 18px; font-size: 13px; }
 }
 </style>
 
@@ -228,21 +264,21 @@
       </div>
 
       <ul class="agree-kv">
-        <li><b>PERFICIENT LENDING CORP:</b> [PERFICIENT LENDING CORP]</li>
-        <li><b>Registration Date:</b> [01/26/2024]</li>
-        <li><b>SEC / License / Registration Number:</b> [#SEC-2024010132735-01 / L-24-0599-28]</li>
-        <li><b>Registered Country:</b> [Philippine]</li>
+        <li><b>MoneyTap:</b> [MoneyTap]</li>
+        <li><b>Registration Date:</b> [06/03/2023]</li>
+        <li><b>SEC / License / Registration Number:</b> [0232668 / A528474 / A528474-3]</li>
+        <li><b>Registered Country:</b> [Pakistan]</li>
       </ul>
 
       <hr class="agree-hr">
 
       <p class="agree-p">
-        [PERFICIENT LENDING CORP] is a formally established and legally registered financial services organization operating
-        in accordance with the applicable laws, regulations, and regulatory frameworks of [Philippine].
+        [MoneyTap] is a formally established and legally registered financial services organization operating
+in accordance with the applicable laws, regulations, and regulatory frameworks of [Pakistan].
       </p>
 
       <p class="agree-p">
-        The Company was officially incorporated on [01/26/2024] and operates under business registration,
+        The Company was officially incorporated on [06/03/2023] and operates under business registration,
         financial service license, or regulatory approval number [SEC / LICENSE / REGISTRATION NUMBER], as issued
         by the relevant governmental or regulatory authority.
       </p>
@@ -255,7 +291,7 @@
 
       <p class="agree-p">
         The Company exists as a lawful business entity with recognized legal standing and conducts its operations in compliance
-        with commercial, financial, consumer protection, and data protection laws applicable within [Philippine].
+        with commercial, financial, consumer protection, and data protection laws applicable within [Pakistan].
       </p>
 
       <p class="agree-p">
@@ -408,21 +444,37 @@ shall be final and binding upon both Parties.</div>
         <div class="article-item">
           <p><span class="art-title">Article 9</span><br>
           <div class="article-text">Governing Law, This Agreement shall be governed by and construed in accordance with the
-laws of the Republic of the Philippines.
+laws of the Republic of Pakistan.
 Any dispute arising from or relating to this Agreement shall be subject to the applicable laws,
-rules, and regulations in force within the Philippines.</div>
+rules, and regulations in force within Pakistan.</div>
         </div>
 
         <div class="article-item">
-          <p><span class="art-title">Article 10</span><br>
-          <div class="article-text">Confidentiality and Data Privacy, Both Parties agree to maintain the confidentiality of all
-information exchanged in connection with this Agreement, including personal, financial, and
-transaction-related information.
-The Company shall process and protect personal data in accordance with the Data Privacy Act of
-2012 (Republic Act No. 10173) and other applicable data protection regulations in the Philippines.
-Information shall not be disclosed to third parties without prior written consent, except when
-required by law or by competent government authority.</div>
-        </div>
+  <p><span class="art-title">Article 10</span><br>
+  <div class="article-text">
+Confidentiality and Data Privacy. Both Parties agree to maintain the confidentiality of all
+information exchanged in connection with this Agreement, including personal, financial,
+transaction-related, and identity verification information.
+
+The Company shall collect, process, store, and protect personal data in accordance with the
+applicable data protection, privacy, electronic transaction, and cybersecurity laws and
+regulations of the Islamic Republic of Pakistan, including any future amendments or
+successor legislation governing personal data protection.
+
+Personal data may be processed for purposes including identity verification, risk assessment,
+loan evaluation, compliance checks, repayment monitoring, fraud prevention, communication,
+and lawful recovery procedures.
+
+Information shall not be disclosed to third parties without prior consent of the User, except
+where disclosure is required by applicable law, court order, regulatory authority, financial
+institution, credit bureau, lawful recovery agent, or other competent governmental body
+within Pakistan.
+
+The User acknowledges and agrees that electronic records, digital signatures, system logs,
+and communication records may be retained as legally admissible evidence in accordance
+with the applicable laws of Pakistan.
+  </div>
+</div>
 
         <div class="article-item">
           <p><span class="art-title">Article 11</span><br>
@@ -435,7 +487,7 @@ provided that such updates shall not materially prejudice the rights of the Clie
         <div class="article-item">
           <p><span class="art-title">Article 12</span><br>
           <div class="article-text">Severability, If any provision of this Agreement is declared invalid, illegal, or unenforceable
-under Philippine law, such provision shall be deemed severed from this Agreement.
+under Pakistani law, such provision shall be deemed severed from this Agreement.
 The remaining provisions shall continue to be valid and enforceable to the fullest extent permitted by law.</div>
         </div>
 
@@ -456,7 +508,7 @@ The remaining provisions shall continue to be valid and enforceable to the fulle
         <p>
           This <strong>Extended Loan User Agreement, Terms, Conditions, Disclosures, Acknowledgments, Waivers, and Legal Notices</strong>
           (the “<strong>Agreement</strong>”) is a legally binding and enforceable contract entered into by and between
-          <strong>[PERFICIENT LENDING CORP]</strong> (the “Company,” “We,” “Us,” or “Our”) and any individual or legal entity who accesses,
+          <strong>[MoneyTap]</strong> (the “Company,” “We,” “Us,” or “Our”) and any individual or legal entity who accesses,
           applies for, receives, guarantees, repays, or otherwise interacts with any loan, financial product, service,
           website, mobile application, communication channel, or platform operated or provided by the Company
           (the “User,” “Borrower,” “Applicant,” “Guarantor,” “You,” or “Your”).
@@ -489,7 +541,7 @@ The remaining provisions shall continue to be valid and enforceable to the fulle
 
         <h2>SECTION 3 — ELIGIBILITY & USER REPRESENTATIONS</h2>
         <ol>
-          <li>You confirm You are legally capable of entering a binding contract in <strong>[Philippine]</strong>.</li>
+          <li>You confirm You are legally capable of entering a binding contract in <strong>[Pakistan]</strong>.</li>
           <li>
             You confirm all information You provide (identity, income, contacts, guarantor info, documents) is true, accurate, complete,
             and kept up-to-date.
@@ -610,7 +662,7 @@ The remaining provisions shall continue to be valid and enforceable to the fulle
 
         <h2>SECTION 16 — GOVERNING LAW & DISPUTE RESOLUTION</h2>
         <ol>
-          <li>This Agreement is governed by the laws of <strong>[Philippine]</strong>.</li>
+          <li>This Agreement is governed by the laws of <strong>[Pakistan]</strong>.</li>
           <li>
             You agree to attempt good-faith resolution by contacting support at <strong>[CONTACT]</strong> before initiating formal proceedings, where permitted.
           </li>
@@ -642,6 +694,12 @@ The remaining provisions shall continue to be valid and enforceable to the fulle
         <hr />
       </div>
     </div>
+    <!-- TOP ACTIONS -->
+<div class="top-actions">
+  <a class="back-btn" href="{% url 'profile' %}">
+    Back
+  </a>
+</div>
 
   </div>
 </div>

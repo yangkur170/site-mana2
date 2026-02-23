@@ -3,6 +3,17 @@
 
 {% block content %}
 <style>
+  :root{
+    --g1:#0E5F2F;
+    --g2:#1E8E3E;
+    --g-bright:#6BFF2A;
+
+    --silver: rgba(192,192,192,0.904);
+    --shadowA: 0 0 10px rgba(10,10,9,0.788);
+    --shadowB: 0 14px 10px rgba(0,0,0,0.815);
+    --shadow: var(--shadowA), var(--shadowB);
+  }
+
   .wrap{ align-items:flex-start; }
 
   .page{
@@ -12,78 +23,71 @@
     box-sizing: border-box;
   }
 
+  /* ✅ Card = same as wallet/profile */
   .cardx{
     position: relative;
-    background: rgba(9, 10, 10, 0.856);
+    background: rgba(0, 0, 0, 0.788);
     border-radius: 18px;
     padding: 18px;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 3px 6px rgba(245,245,245,.40), inset 0 1px 0 rgba(163,157,157,.35);
+
+    border: 2px solid var(--silver);
+    box-shadow: var(--shadow);
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
     overflow: hidden;
     margin-bottom: 12px;
   }
-  /* Back button shape like picture */
-.back-btn{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 
-  height: 42px;
-  padding: 0 22px 0 28px;   /* left a bit bigger */
-  border-radius: 12px;
+  /* ✅ Back button = same as wallet (green) */
+  .top-actions{ margin-top: 0; display:flex; justify-content:flex-start; }
+  .back-btn{
+    height: 42px;
+    padding: 0 22px;
+    border-radius: 12px;
 
-  background: #e7e7e7;
-  color: #111827;
-  font-weight: 800;
-  text-decoration: none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 
-  border: 1px solid rgba(0,0,0,.18);
-  box-shadow:
-    0 6px 14px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.65);
-}
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+    color:#fff;
+    font-weight: 900;
+    text-decoration:none;
 
-
-
-/* hover/active */
-.back-btn:hover{
-  transform: translateY(-1px);
-}
-.back-btn:active{
-  transform: translateY(0px);
-  opacity: .92;
-}
-
-/* Mobile adjustments */
-@media (max-width:520px){
-  .top-actions{ padding: 10px 12px 0; }
-  .top-actions-line{ margin: 10px 12px 0; }
-  .back-btn{ height: 40px; padding: 0 18px 0 24px; font-size: 13px; }
-  .back-btn::before{
-    left: -13px;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-right: 13px solid #e7e7e7;
+    border: 2px solid var(--silver);
+    box-shadow: var(--shadow);
   }
-}
+  .back-btn:hover{ transform: translateY(-1px); }
+  .back-btn:active{ transform: translateY(0); opacity:.92; }
 
+  @media (max-width:520px){
+    .back-btn{ height: 40px; padding: 0 18px; font-size: 13px; }
+  }
+
+  /* inputs */
   input[type="number"]{
     width:100%;
     height:40px;
-    min-height:40px;
-    max-height:40px;
-    resize:none;
     box-sizing:border-box;
-  }
-  input[type="number"]:focus{
-  outline: none;
-  border: 1px solid rgba(0,65,130,.85);
-  box-shadow: 0 0 0 3px rgba(5,69,133,.25);
-}
-  input[readonly]{ opacity:.92; }
+    border-radius: 12px;
 
+    border: 1px solid rgba(255,255,255,.20);
+    background: rgba(0,0,0,.18);
+    color:#fff;
+    outline:none;
+    padding: 0 12px;
+  }
+  input[type="number"]::placeholder{ color: rgba(255,255,255,.55); }
+  input[type="number"]:focus{
+    border-color: rgba(107,255,42,.55);
+    box-shadow: 0 0 0 3px rgba(107,255,42,.18);
+    background: rgba(0,0,0,.22);
+  }
+  input[readonly]{ opacity:.80; }
+
+  /* term buttons = green theme */
   .term-grid{
     display:grid;
     grid-template-columns:repeat(6,1fr);
@@ -93,21 +97,27 @@
   @media(max-width:520px){
     .term-grid{ grid-template-columns:repeat(3,1fr); }
   }
+
   .term-btn{
     padding:12px 0;
     border-radius:999px;
-    border:1px solid rgba(255,255,255,.22);
-    background:rgba(255,255,255,.10);
+
+    border: 2px solid rgba(192,192,192,0.55);
+    background: rgba(255,255,255,.08);
     color:#fff;
-    font-weight:800;
+    font-weight:900;
     cursor:pointer;
-    transition: transform .08s ease, opacity .2s ease;
+
+    transition: transform .08s ease, opacity .2s ease, filter .2s ease;
   }
   .term-btn:active{ transform:scale(.98); }
+
   .term-btn.active{
-  background: linear-gradient(90deg, #004182, #054585d0);
-  border-color: rgba(0,65,130,.65);
-}
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+    border-color: rgba(107,255,42,.35);
+    box-shadow: var(--shadow);
+  }
+
   .term-btn:disabled{
     opacity:.55;
     cursor:not-allowed;
@@ -133,8 +143,35 @@
 
   .cta{ margin-top: 12px; width: 100%; }
   .hint{ margin-top:8px; opacity:.85; }
+  .muted{ color: rgba(255,255,255,.78); }
 
-  /* ===== Application Status UI ===== */
+  /* ✅ Continue button = green theme */
+  #goApply{
+    width: 100%;
+    height: 54px;
+    border-radius: 999px;
+
+    border: 2px solid var(--silver) !important;
+    background: linear-gradient(90deg, var(--g1), var(--g2)) !important;
+
+    color:#fff !important;
+    font-weight:950 !important;
+    letter-spacing:.10em;
+    text-transform: uppercase;
+
+    box-shadow: var(--shadow) !important;
+    cursor:pointer;
+  }
+  #goApply:active{ transform: scale(.99); }
+
+  #goApply:disabled{
+    opacity: .45 !important;
+    cursor:not-allowed !important;
+    filter: grayscale(.20);
+    transform:none !important;
+  }
+
+  /* ===== Status UI keep but recolor to green ===== */
   .status-head{
     display:flex;
     align-items:flex-start;
@@ -153,6 +190,7 @@
     opacity:.85;
     line-height:1.35;
   }
+
   .mini-pill{
     display:inline-flex;
     align-items:center;
@@ -161,17 +199,20 @@
     border-radius:999px;
     font-weight:950;
     font-size:12px;
-    border: 1px solid rgba(255,255,255,.14);
-    background: rgba(0,0,0,.16);
+
+    border: 2px solid rgba(192,192,192,0.55);
+    background: rgba(255,255,255,.08);
     color:#fff;
     white-space: nowrap;
+
+    box-shadow: var(--shadowA), var(--shadowB);
   }
   .mini-pill.is-rejected{
-  background: rgba(255, 44, 44, .18);
-  border: 1px solid rgba(255, 44, 44, .65);
-  color: #ff4a4a;
-  box-shadow: 0 10px 26px rgba(255, 44, 44, .12);
-}
+    background: rgba(255, 44, 44, .18);
+    border: 2px solid rgba(255, 44, 44, .65);
+    color: #ff4a4a;
+    box-shadow: 0 10px 26px rgba(255, 44, 44, .12);
+  }
 
   .status-btn{
     flex:0 0 auto;
@@ -181,74 +222,76 @@
     gap:10px;
     padding:10px 12px;
     border-radius:14px;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.18);
+
+    border: 2px solid rgba(192,192,192,0.55);
+    background: linear-gradient(90deg, var(--g1), var(--g2));
     color:#fff;
     font-weight:950;
     letter-spacing:.02em;
-    cursor:pointer;
+
+    box-shadow: var(--shadow);
   }
+  .status-btn:active{ transform: scale(.99); }
 
   .step-row{ display:flex; align-items:center; gap:10px; margin-top:10px; }
+
   .dot{
     width:34px; height:34px; border-radius:999px;
     display:flex; align-items:center; justify-content:center;
     font-weight:950;
-    border:1px solid rgba(255,255,255,.18);
-    background:rgba(0,0,0,.18);
-    color:rgba(255,255,255,.75);
+
+    border: 2px solid rgba(192,192,192,0.55);
+    background: rgba(255,255,255,.08);
+    color:rgba(255,255,255,.85);
   }
   .dot.active{
-  background: rgba(0,65,130,.22);
-  border-color: rgba(0,65,130,.60);
-  color:#fff;
-}
+    background: rgba(107,255,42,.18);
+    border-color: rgba(107,255,42,.45);
+    color:#fff;
+    box-shadow: 0 0 0 1px rgba(107,255,42,.15);
+  }
+
   .line{
     flex:1; height:3px; border-radius:999px;
     background:rgba(255,255,255,.18);
   }
-  .line.active{ background: rgba(0,65,130,.75); }
-  .step-labels{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-    margin-top:10px;
-    font-size:12px;
-    color:rgba(255,255,255,.78);
-  }
+  .line.active{ background: rgba(107,255,42,.55); }
+
   .step-labels.three{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  text-align:center;
-  margin-top:8px;
-  font-size:12px;
-  opacity:.85;
-}
-.reject-alert{
-  margin-top:12px;
-  border-radius:16px;
-  padding:14px;
-  border:1px solid rgba(255,60,60,.45);
-  background: rgba(255,60,60,.12);
-}
-.reject-alert .ra-title{ font-weight:900; }
-.reject-alert .ra-text{ opacity:.9; margin-top:6px; }
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align:center;
+    margin-top:8px;
+    font-size:12px;
+    opacity:.85;
+  }
 
-#goApply{
-  border: 0 !important;
-  background: linear-gradient(90deg, #004182, #054585d0) !important;
-  box-shadow: 0 18px 45px rgba(0,0,0,.40) !important;
-}
-
-#goApply:disabled{
-  opacity: .65 !important;
-}
+  .reject-alert{
+    margin-top:12px;
+    border-radius:16px;
+    padding:14px;
+    border:1px solid rgba(255,60,60,.45);
+    background: rgba(255,60,60,.12);
+  }
+  .reject-alert .ra-title{ font-weight:900; }
+  .reject-alert .ra-text{ opacity:.9; margin-top:6px; }
 </style>
 
 <div class="page">
 
   <!-- ===== Card 1: Amount/Term ===== -->
   <div class="cardx">
+    <div id="amountToast" style="
+display:none;
+margin-bottom:12px;
+padding:14px;
+border-radius:16px;
+border:1px solid rgba(255,60,60,.45);
+background:rgba(255,60,60,.12);
+font-weight:900;
+color:#ff4a4a;">
+  Loan amount must be between 300,000 and 60,000,000.
+</div>
     <div class="top-actions">
       <a class="back-btn" href="{% url 'dashboard' %}">
         Back
@@ -256,12 +299,12 @@
     </div>
     <div class="top-actions-line"></div>
     <div class="field">
-      <label>Loan amount (Min 100,000 • Max 5,000,000)</label>
+      <label>Loan amount (Min 300,000 • Max 60,000,000)</label>
       <input
         type="number"
         id="qAmount"
-        min="100000"
-        max="5000000"
+        min="300000"
+        max="60000000"
         placeholder="Enter amount"
         {% if loan %}readonly{% endif %}
       >
@@ -346,30 +389,49 @@
   }
 
   function update(){
-    const amount = Number(amountEl?.value || 0);
-    const term = Number(termEl?.value || 0);
+  const amount = Number(amountEl?.value || 0);
+  const term = Number(termEl?.value || 0);
 
-    if (outAmount) outAmount.textContent = amount > 0 ? ("PHP " + fmt(amount)) : "—";
-    if (outTerm) outTerm.textContent = term > 0 ? (term + " months") : "—";
+  const toast = document.getElementById("amountToast");
 
-    const rate = 0.0005;
-    if(amount > 0 && term > 0){
-      const total = amount + (amount * rate * term);
-      const monthly = total / term;
-      if (outMonthly) outMonthly.textContent = "PHP " + fmt(Math.round(monthly));
+  if(amount < 300000 || amount > 60000000){
+    if(outAmount) outAmount.textContent = "—";
+    if(outTerm) outTerm.textContent = "—";
+    if(outMonthly) outMonthly.textContent = "—";
 
-      {% if not loan %}
-        goBtn.disabled = false;
-        goBtn.style.opacity = "1";
-      {% endif %}
-    } else {
-      if (outMonthly) outMonthly.textContent = "—";
-      {% if not loan %}
-        goBtn.disabled = true;
-        goBtn.style.opacity = ".65";
-      {% endif %}
+    if(goBtn){
+      goBtn.disabled = true;
+      goBtn.style.opacity = ".65";
     }
+
+    if(amountEl.value !== ""){
+      toast.style.display = "block";
+    } else {
+      toast.style.display = "none";
+    }
+
+    return;
   }
+
+  toast.style.display = "none";
+
+  if (outAmount) outAmount.textContent = "PKR " + fmt(amount);
+  if (outTerm) outTerm.textContent = term > 0 ? (term + " months") : "—";
+
+  const rate = 0.0005;
+  if(amount > 0 && term > 0){
+    const total = amount + (amount * rate * term);
+    const monthly = total / term;
+    if (outMonthly) outMonthly.textContent = "PKR " + fmt(Math.round(monthly));
+
+    goBtn.disabled = false;
+    goBtn.style.opacity = "1";
+  } else {
+    if (outMonthly) outMonthly.textContent = "—";
+    goBtn.disabled = true;
+    goBtn.style.opacity = ".65";
+  }
+}
 
   btns.forEach((b)=>{
     b.addEventListener("click", ()=>{

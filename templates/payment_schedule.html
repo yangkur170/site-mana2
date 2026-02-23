@@ -9,18 +9,40 @@
   .wrap{ align-items:flex-start; justify-content:center; padding-top:92px; padding-bottom:40px; }
   @media(max-width:480px){ .wrap{ padding-top:78px; } }
 
-  .ps-card{
-    width:min(560px, 94vw);
-    background: rgba(20, 28, 28, .58);
-    border: 1px solid rgba(255,255,255,.10);
-    box-shadow: 0 12px 40px rgba(0,0,0,.45);
-    border-radius: 18px;
-    padding: 14px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    text-align:left;
-    animation: cardSwipe .45s ease both;
-  }
+  :root{
+  --g1:#0E5F2F;
+  --g2:#1E8E3E;
+  --silver: rgba(192,192,192,0.904);
+  --shadowA: 0 0 10px rgba(10,10,9,0.788);
+  --shadowB: 0 14px 10px rgba(0,0,0,0.815);
+  --shadow: var(--shadowA), var(--shadowB);
+}
+
+/* wrapper center like wallet */
+.w-wrap{
+  width: min(520px, 94vw);
+  margin: 0 auto;
+  padding: 92px 14px 40px;
+  box-sizing: border-box;
+}
+@media(max-width:480px){ .w-wrap{ padding-top:78px; } }
+
+/* ✅ card same as wallet */
+.ps-card{
+  position: relative;
+  background: rgba(0,0,0,.788);
+  border-radius: 18px;
+  padding: 14px;
+
+  border: 2px solid var(--silver);
+  box-shadow: var(--shadow);
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+
+  overflow: hidden;
+  animation: cardSwipe .45s ease both;
+}
   @keyframes cardSwipe{ from{opacity:0; transform:translateX(16px) scale(.99);} to{opacity:1; transform:translateX(0) scale(1);} }
 
   .head{ display:flex; justify-content:space-between; gap:10px; margin-bottom:10px; align-items:flex-start; }
@@ -28,22 +50,24 @@
   .sub{ font-size:12px; color: rgba(255,255,255,.72); margin-top:2px; }
 
   .pill{
-    padding:6px 12px; border-radius:999px;
-    border:1px solid rgba(255,255,255,.10);
-    background: rgba(0,0,0,.25);
-    color:#dfffe9;
-    font-weight:900;
-    font-size:12px;
-    white-space:nowrap;
-  }
+  padding:6px 12px;
+  border-radius:999px;
+  background: linear-gradient(90deg, var(--g1), var(--g2));
+  border: 2px solid var(--silver);
+  color:#fff;
+  font-weight:900;
+  font-size:12px;
+  white-space:nowrap;
+  box-shadow: var(--shadowA), var(--shadowB);
+}
 
-  .item{
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,.10);
-    background: rgba(0,0,0,.22);
-    padding:12px 12px;
-    margin-bottom:10px;
-  }
+.item{
+  border-radius:16px;
+  border: 2px solid rgba(192,192,192,.55);
+  background: rgba(0,0,0,.18);
+  padding:12px;
+  margin-bottom:10px;
+}
   .row{ display:flex; justify-content:space-between; gap:10px; }
   .kv{ line-height:1.25; }
   .kv b{ color:#fff; font-weight:950; }
@@ -53,16 +77,17 @@
   .small{ font-size:12px; color: rgba(255,255,255,.72); margin-top:4px; }
 
   .btn-primary{
-    border:0 !important;
-    background: linear-gradient(90deg, #004182, #054585d0) !important;
-    color:#fff !important;
-    box-shadow: 0 12px 30px rgba(0,0,0,.35) !important;
-  }
+  border: 2px solid var(--silver) !important;
+  background: linear-gradient(90deg, var(--g1), var(--g2)) !important;
+  color:#fff !important;
+  box-shadow: var(--shadow) !important;
+}
   .btn-primary:active{ transform: scale(.98); }
   .actions{ margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
 </style>
 
-<div class="ps-card pm-page">
+<div class="w-wrap pm-page">
+  <div class="ps-card">
   <div class="head">
     <div>
       <div class="title">Payment Schedule</div>

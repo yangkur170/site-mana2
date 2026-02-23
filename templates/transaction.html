@@ -3,68 +3,113 @@
 
 {% block content %}
 <style>
-
-.tx-page, .tx-page *{
-  font-family: "Ovelion", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-}
-  /* Blue theme override (Transactions page) */
-  .btn-primary{
-    border: 0 !important;
-    background: linear-gradient(90deg, #004182, #054585d0) !important;
-    color: #ffffff !important;
-    box-shadow: 0 12px 30px rgba(0,0,0,.35) !important;
-  }
-  .btn-primary:active{ transform: scale(.98); }
-
-  /* Balance badge */
-  .badge{
-    background: linear-gradient(90deg, #004182, #054585d0) !important;
-    color: #e6f1ff !important;
-    border: 1px solid rgba(255,255,255,.18) !important;
-    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+  :root{
+    --g1:#0E5F2F;
+    --g2:#1E8E3E;
+    --silver: rgba(192,192,192,0.904);
+    --shadowA: 0 0 10px rgba(10,10,9,0.788);
+    --shadowB: 0 14px 10px rgba(0,0,0,0.815);
+    --g-bright:#6BFF2A;
+    --shadow: var(--shadowA), var(--shadowB);
   }
 
-  /* List style like wallet */
-  .tx-wrap{ width: min(520px, 94vw); margin: 0 auto; padding-top: 20px; }
+  .tx-page, .tx-page *{
+    font-family: "Ovelion", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  /* ✅ wrap like wallet */
+  .tx-wrap{
+    width: min(520px, 94vw);
+    margin: 0 auto;
+    padding: 74px 14px 24px;
+    box-sizing: border-box;
+  }
+
+  /* ✅ culture card (same as wallet) */
   .tx-card{
-    background: rgba(9, 10, 10, 0.788);
+    position: relative;
+    background: rgba(0, 0, 0, 0.788);
     border-radius: 18px;
     padding: 18px;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 3px 4px rgba(245, 245, 245, 0.55), inset 0 1px 0 rgba(163, 157, 157, 0.918);
+
+    border: 2px solid var(--silver);
+    box-shadow: var(--shadow);
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
     overflow: hidden;
   }
-  .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-  .title{ font-weight:950; font-size:18px; }
-  .sub{ font-size:12px; opacity:.75; margin-top:2px; }
 
-  .list-row{
-    display:flex; justify-content:space-between; gap:12px;
-    padding:10px 0;
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    font-size:13px;
-  }
+  .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .title{ font-weight:950; font-size:18px; color:#fff; }
+  .sub{ font-size:12px; opacity:.75; margin-top:2px; color:#eafff1; }
+  .muted{ font-size:12px; opacity:.75; margin-top:2px; color:#eafff1; }
+
+  /* ✅ pill like wallet */
   .pill{
-    padding:6px 12px; border-radius:999px;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.25);
-    font-weight:900; font-size:12px;
+    padding:6px 12px;
+    border-radius:999px;
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+    border: 2px solid var(--silver);
+
+    color:#fff;
+    font-weight:900;
+    font-size:12px;
     white-space:nowrap;
+
+    box-shadow: var(--shadow);
   }
-  /* ✅ status colors */
+
+  /* ✅ balance badge (green) */
+  .badge{
+    padding:6px 12px;
+    border-radius:999px;
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+    border: 2px solid var(--silver);
+    color:#fff;
+    font-weight:900;
+    font-size:12px;
+    white-space:nowrap;
+    box-shadow: var(--shadow);
+  }
+
+  /* ✅ list row */
+  .list-row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 0;
+    border-bottom: 1px solid rgba(255,255,255,.14);
+    font-size:13px;
+    color:#fff;
+  }
+
+  /* ✅ status pills */
   .pill-success{
-    background: rgba(34,197,94,.20);
-    border-color: rgba(34,197,94,.45);
+    background: rgba(34,197,94,.18);
+    border: 1px solid rgba(34,197,94,.45);
     color: #eafff1;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
   }
   .pill-danger{
     background: rgba(239,68,68,.20);
-    border-color: rgba(239,68,68,.45);
+    border: 1px solid rgba(239,68,68,.45);
     color: #ffecec;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
   }
 
-  .muted{ font-size:12px; opacity:.75; margin-top:2px; }
+  /* ✅ buttons: make primary GREEN (no blue) */
+  .tx-page .btn.btn-primary{
+    border: 2px solid var(--silver) !important;
+    background: linear-gradient(90deg, var(--g1), var(--g2)) !important;
+    color:#fff !important;
+    font-weight:950 !important;
+    box-shadow: var(--shadow) !important;
+  }
+  .tx-page .btn.btn-primary:active{ transform: scale(.99); }
+
+  /* keep ghost fine (if base has blue focus etc, this page won't use it) */
 </style>
 
 <div class="tx-wrap tx-page">
@@ -74,13 +119,13 @@
         <div class="title"><span class="silver-run">Transactions</span></div>
         <div class="sub">Only Payment sent / Rejected (Latest 20)</div>
       </div>
-      <span class="badge">Balance: PHP {{ request.user.balance|default:"0" }}</span>
+      <span class="badge">Balance: PKR {{ request.user.balance|default:"0" }}</span>
     </div>
 
     {% for w in withdrawals %}
       <div class="list-row">
         <div>
-          <div style="font-weight:900;">PHP {{ w.amount }} {{ w.currency }}</div>
+          <div style="font-weight:900;">PKR {{ w.amount }}</div>
           <div class="muted">{{ w.created_at|date:"M d, Y, P" }}</div>
         </div>
 

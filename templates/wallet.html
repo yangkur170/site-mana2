@@ -4,196 +4,115 @@
 
 {% block content %}
 <style>
-  
-
-/* Back button shape like picture */
-/* ✅ Top actions wrapper for Back button */
-.top-actions{
-  margin-top: 12px;         /* space from above */
-  display: flex;
-  justify-content: flex-start;
-}
-.back-btn{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  height: 42px;
-  padding: 0 22px 0 28px;   /* left a bit bigger */
-  border-radius: 12px;
-
-  background: #13111185;
-  color: #ffffffc9;
-  font-weight: 800;
-  text-decoration: none;
-
-  border: 1px solid rgba(189, 189, 189, 0.164);
-  box-shadow:
-    0 6px 14px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.65);
-}
-/* hover/active */
-.back-btn:hover{
-  transform: translateY(-1px);
-}
-.back-btn:active{
-  transform: translateY(0px);
-  opacity: .92;
-}
-
-/* Mobile adjustments */
-@media (max-width:520px){
-  .top-actions{ padding: 10px 12px 0; }
-  .top-actions-line{ margin: 10px 12px 0; }
-  .back-btn{ height: 40px; padding: 0 18px 0 24px; font-size: 13px; }
-  .back-btn::before{
-    left: -13px;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-right: 13px solid #e7e7e7;
+  :root{
+    --g1:#0E5F2F;
+    --g2:#1E8E3E;
+    --silver: rgba(192,192,192,0.904);
+    --shadowA: 0 0 10px rgba(10,10,9,0.788);
+    --shadowB: 0 14px 10px rgba(0,0,0,0.815);
+    --g-bright:#6BFF2A;
+    --shadow: var(--shadowA), var(--shadowB);
   }
-}
-/* Center alert same width as wallet cards */
-.status-alert{
-  width: min(520px, 94vw);
-  margin: 0 auto 14px;     /* center + space bottom */
-  padding: 12px 16px;
-  border-radius: 999px;
-  text-align: center;
-  font-weight: 900;
-  letter-spacing: .4px;
-  box-sizing: border-box;
-}
 
-.status-danger{
-  background: #dc2626;
-  color: #fff;
-}
-.status-danger{ background:#dc2626; color:#fff; }
-  /* ===== Account Status Badge (Shared) ===== */
-  .status-badge{
-  display: flex;
-  align-items: center;
-  justify-content: center;   /* ⭐ center អក្សរ */
-  text-align: center;
+  /* ✅ same center width as dashboard */
+  .w-wrap{
+    width: min(520px, 94vw);
+    margin: 0 auto;
+    padding: 74px 14px 24px;
+    box-sizing: border-box;
+  }
 
-  padding: 12px 18px;
-  border-radius: 999px;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: .4px;
+.cardx{
+  position: relative;
+  background: rgba(0, 0, 0, 0.788);
+  border-radius: 18px;
+  padding: 18px;
+
+  border: 2px solid var(--silver);
+  box-shadow: var(--shadow);
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+
+  overflow: hidden;
   margin-bottom: 12px;
 }
 
-
-/* ACTIVE */
-.status-active{
-  background: #16a34a;
-  color: #fff;
+.cardx.card-green{
+  background: linear-gradient(90deg, #0E5F2F, #0aa837) !important;
 }
-
-/* FROZEN / ERROR / REJECT */
-.status-danger{
-  background: #dc2626;
-  color: #fff;
-}
-  /* wrapper center same as cards */
-  .w-wrap{
-  width: min(520px, 94vw);
-  margin: 0 auto;
-  padding-top: 20px;   /* ✅ space top 10–12px */
-}
-
-/* alert banner */
-.status-alert{
-  width: 100%;
-  margin-bottom: 14px;
-  padding: 12px 16px;
-  border-radius: 999px;
-  text-align: center;
-  font-weight: 900;
-  letter-spacing: .4px;
-  box-sizing: border-box;
-}
-
-.status-danger{
-  background: #dc2626;
-  color: #fff;
-}
-  .cardx{
-    position: relative;
-    background: rgba(9, 10, 10, 0.788);
-    border-radius: 18px;
-    padding: 18px;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 3px 4px rgba(245, 245, 245, 0.55), inset 0 1px 0 rgba(163, 157, 157, 0.918);
-    overflow: hidden;
-    margin-bottom: 12px;
+  /* ✅ Android performance mode (same as dashboard) */
+  .android-no-blur .cardx{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
-  .row{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-  }
-  .title{ font-weight:950; font-size:18px; }
-  .sub{ font-size:12px; opacity:.75; margin-top:2px; }
+
+  .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .title{ font-weight:950; font-size:18px; color:#fff; }
+  .sub{ font-size:12px; opacity:.75; margin-top:2px; color:#eafff1; }
+
+  /* ✅ pill EXACT like dashboard */
   .pill{
-    padding:6px 12px; border-radius:999px;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.25);
-    font-weight:900; font-size:12px;
+    padding:6px 12px;
+    border-radius:999px;
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+    border: 2px solid var(--silver);
+
+    color:#fff;
+    font-weight:900;
+    font-size:12px;
     white-space:nowrap;
+
+    box-shadow: var(--shadowA), var(--shadowB);
   }
 
-  /* Inputs (number) */
+  /* ✅ inputs: keep inside card look */
   .num-input{
     width: 100%;
     margin-top: 10px;
     padding: 12px 14px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.18);
+
+    border: 1px solid rgba(255,255,255,.20);
     background: rgba(0,0,0,.18);
     color: #fff;
     outline: none;
     font-size: 14px;
   }
-  .num-input::placeholder{ color: rgba(255,255,255,.45); }
-  .num-input:focus{
-  border-color: rgba(0,65,130,.75); /* #004182 */
-  box-shadow: 0 0 0 3px rgba(5,69,133,.35); /* #054585d0 느낌 */
-  background: rgba(0,0,0,.22);
-}
+  .num-input::placeholder{ color: rgba(255,255,255,.55); }
 
-  /* Withdraw NOW button (Quick Loan style) */
+  /* ✅ focus = green glow (NO BLUE) */
+  .num-input:focus{
+    border-color: rgba(107,255,42,.55);
+    box-shadow: 0 0 0 3px rgba(107,255,42,.18);
+    background: rgba(0,0,0,.22);
+  }
+
+  /* ✅ big button same vibe as dashboard quick */
   .big-btn{
     display:flex;
     align-items:center;
     justify-content:center;
     gap:10px;
+
     height:54px;
+    width:100%;
+
     border-radius:999px;
-    text-decoration:none;
+    border: 2px solid var(--silver);
+
+    color:#fff;
     font-weight:950;
     letter-spacing:.10em;
     text-transform:uppercase;
-    color:#fff;
-    background: linear-gradient(90deg, #004182, #054585d0);
-    box-shadow: 0 18px 45px rgba(0,0,0,.40);
-    border:0;
-    width:100%;
+
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+    box-shadow: var(--shadowA), var(--shadowB);
+
     cursor:pointer;
     transition: opacity .2s ease, transform .08s ease, filter .2s ease;
   }
   .big-btn:active{ transform: scale(.99); }
-  .big-btn .dot{
-    width:32px; height:32px;
-    border-radius:999px;
-    background: rgba(0,0,0,.22);
-    display:flex; align-items:center; justify-content:center;
-    border:1px solid rgba(255,255,255,.10);
-  }
-
-  /* Disabled state */
   .big-btn[disabled]{
     opacity:.45;
     cursor:not-allowed;
@@ -203,57 +122,106 @@
   .hint{
     margin-top: 10px;
     font-size: 12px;
-    opacity: .75;
+    opacity: .85;
+    color:#eafff1;
   }
 
-  /* Timeline */
-  .timeline{ margin-top: 12px; display:none; }
+  /* ✅ timeline */
+  .timeline{ margin-top:12px; display:none; }
   .tl-item{ display:flex; align-items:center; gap:12px; padding:10px 0; }
+
   .tl-bullet{
     width:34px; height:34px;
     border-radius:999px;
     background: rgba(0,0,0,.22);
-    border:1px solid rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.14);
     display:flex; align-items:center; justify-content:center;
     flex:0 0 auto;
   }
   .tl-bullet.on{
-  background: rgba(0,65,130,.25);      /* #004182 */
-  border-color: rgba(5,69,133,.55);    /* #054585d0 */
-}
+    background: rgba(107,255,42,.18);
+    border-color: rgba(107,255,42,.45);
+  }
   .tl-bullet.rej{
     background: rgba(239,68,68,.22);
     border-color: rgba(239,68,68,.55);
   }
-  /* rejected style (ONLY last tick) */
-.tl-bullet.rejected{
-  background: rgba(239,68,68,.25);
-  border-color: rgba(239,68,68,.6);
-}
-.tl-text.rejected{
-  color:#ef4444;
-}
-
-  .tl-text.rej{ color: #ffb4b4; }
-  .muted.rej{ color: rgba(255,170,170,.85); opacity:1; }
   .tl-bullet svg{ width:18px; height:18px; fill:#fff; opacity:.95; }
-  .tl-text{ font-weight:900; }
-  .muted{ font-size:12px; opacity:.75; margin-top:2px; }
+  .tl-text{ font-weight:900; color:#fff; }
+  .muted{ font-size:12px; opacity:.75; margin-top:2px; color:#eafff1; }
 
+  /* ✅ list */
   .list-row{
     display:flex; justify-content:space-between; gap:12px;
     padding:10px 0;
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(255,255,255,.14);
     font-size:13px;
+    color:#fff;
   }
-  /* Alert spacing control */
-  #formAlert{
+
+  /* ✅ alerts */
+  .status-alert{
+    width: 100%;
+    margin: 0 0 14px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: .4px;
+    box-sizing: border-box;
+  }
+  .status-danger{ background:#dc2626; color:#fff; }
+
+  /* ✅ Back button (match contactus green style) */
+.top-actions{
+  margin-top: 12px;
   display:flex;
-  align-items:center;      /* vertical center */
-  justify-content:center;  /* horizontal center */
-  text-align:center;       /* text center */
+  justify-content:flex-start;
 }
 
+.back-btn{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 42px;
+  padding: 0 22px 0 28px;
+  border-radius: 12px;
+
+  background: linear-gradient(90deg, var(--g1), var(--g2));
+  color: #ffffff;
+
+  font-weight: 900;
+  text-decoration: none;
+
+  border: 2px solid var(--silver);
+  box-shadow: var(--shadow);
+}
+
+.back-btn:hover{
+  transform: translateY(-1px);
+}
+
+.back-btn:active{
+  transform: translateY(0px);
+  opacity: .92;
+}
+  .back-btn:hover{ transform: translateY(-1px); }
+  .back-btn:active{ transform: translateY(0); opacity:.92; }
+
+  @media (max-width:520px){
+    .w-wrap{ padding: 70px 12px 18px; }
+    .back-btn{ height: 40px; padding: 0 18px; font-size: 13px; }
+  }
+
+  /* keep form alert centered */
+  #formAlert{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
 </style>
 
 <div class="w-wrap ovelion">
@@ -261,17 +229,17 @@
   <!-- Card 1: Balance -->
 
   <div id="statusAlert" class="status-alert status-danger" style="display:none;"></div>
-  <div class="cardx">
+  <div class="cardx card-green">
     <div class="row">
       <div>
         <div class="title">Wallet</div>
-        <div class="sub">Balance (PHP)</div>
+        <div class="sub">Balance (PKR)</div>
       </div>
       <div class="pill">Last transaction - Today</div>
     </div>
 
     <div style="margin-top:12px; font-size:28px; font-weight:950;">
-      PHP <span data-balance>{{ request.user.balance|default:"0.00" }}</span>
+      PKR <span data-balance>{{ request.user.balance|default:"0.00" }}</span>
     </div>
   </div>
 
@@ -282,7 +250,7 @@
         <div class="title" style="font-size:16px;">Withdrawal amount</div>
         <div class="sub">Enter amount you want to withdraw</div>
       </div>
-      <div class="pill">PHP</div>
+      <div class="pill">PKR</div>
     </div>
 
     <input
@@ -295,7 +263,7 @@
       placeholder="0.00"
       autocomplete="off"
     />
-    <div class="hint" id="amountHint">Max: PHP 0.00</div>
+    <div class="hint" id="amountHint">Max: PKR 0.00</div>
   </div>
 
   <!-- ✅ UPDATED Card: OTP Code (now input number) -->
@@ -400,7 +368,7 @@
     {% for w in withdrawals %}
       <div class="list-row">
         <div>
-          <div style="font-weight:900;">PHP {{ w.amount }} {{ w.currency }}</div>
+          <div style="font-weight:900;">PKR {{ w.amount }}</div>
           <div class="muted">{{ w.created_at }}</div>
         </div>
         <div class="pill">{{ w.get_status_display }}</div>

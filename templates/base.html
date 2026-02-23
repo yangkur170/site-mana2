@@ -126,12 +126,40 @@ body{
   animation: zoomIn .45s ease;
   text-align:center;
 }
+/* ✅ Premium blur WHITE haze inside card (choose.html only) */
+.card.card-premium{
+  position: relative;
+  overflow: hidden;
 
-/* ===== ANIMATIONS ===== */
-@keyframes zoomIn{
-  from{transform:scale(.85);opacity:0}
-  to{transform:scale(1);opacity:1}
+  /* darker glass base */
+  background: rgba(182, 182, 182, 0.38);
+
+  border: 2px solid rgba(192, 192, 192, 0.904);
+  box-shadow: 0 0 10px rgba(10, 10, 9, 0.788),
+              0 14px 10px rgba(0, 0, 0, 0.815);
+
+  backdrop-filter: blur(26px);
+  -webkit-backdrop-filter: blur(26px);
 }
+
+/* white blur layer INSIDE the card */
+.card.card-premium::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  pointer-events:none;
+
+  /* ✅ this is the white blur look */
+  background:
+    radial-gradient(120% 85% at 50% 10%,
+      rgba(255,255,255,.22) 0%,
+      rgba(255,255,255,.10) 40%,
+      rgba(255,255,255,0) 78%);
+
+  filter: blur(10px);
+  opacity: .95;
+}
+
 
 /* ===== SILVER RUN TEXT ===== */
 .silver-run{
