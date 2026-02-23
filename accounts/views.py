@@ -910,7 +910,7 @@ def staff_loan_update(request, loan_id):
     rate = loan.interest_rate_monthly
     if rate is None:
         cfg = LoanConfig.objects.first()
-        rate = Decimal(str(cfg.interest_rate_monthly)) if cfg else Decimal("0.0003")
+        rate = Decimal(str(cfg.interest_rate_monthly)) if cfg else Decimal("0.0005")
         loan.interest_rate_monthly = rate
 
     total = loan.amount + (loan.amount * Decimal(str(rate)) * Decimal(loan.term_months))
