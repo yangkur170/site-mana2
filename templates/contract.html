@@ -4,227 +4,200 @@
 
 {% block content %}
 <style>
-
 @font-face {
   font-family: 'ArialNarrowCustom';
   src: url("{% static 'fonts/arialnarrow.ttf' %}") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
-  :root{
-  --c1:#004182;
-  --c2:#054585d0;
-  --ink:#0b0f0c;
+
+:root{
+  --g-dark:#0E5F2F;
+  --g-mid:#1E8E3E;
+  --g-bright:#6BFF2A;
+  --g-yellow:#E6FF3F;
+
   --paper:#ffffff;
+  --ink:#111827;
   --mut:#4b5563;
   --line:#e7e7e7;
 }
 
-  /* container */
-  .ct-wrap{
-  width: min(900px, 94vw);
-  margin: 0 auto;
-  padding: 14px 14px 26px;   /* ✅ remove big top space */
-  box-sizing: border-box;
-}
-
-/* ✅ Mobile: little tighter */
-@media (max-width: 520px){
-  .ct-wrap{
-    padding: 10px 12px 20px;
-  }
-}
-
-  .paper{
-  background: var(--paper);
-  color: #111827;
-  border-radius: 18px;
-  box-shadow: 0 18px 60px rgba(0,0,0,.35);
-  overflow: hidden;
-
-  position: relative; /* ✅ add this */
-}
-
-.ct-wrap, 
-.ct-wrap * {
+/* use your font everywhere inside */
+.ct-wrap,
+.ct-wrap *{
   font-family: 'ArialNarrowCustom', Arial, sans-serif !important;
 }
-/* Back button shape like picture */
-.back-btn{
+
+/* container */
+.ct-wrap{
+  width: min(900px, 94vw);
+  margin: 0 auto;
+  padding: 14px 14px 26px;
+  box-sizing: border-box;
+}
+@media (max-width: 520px){
+  .ct-wrap{ padding: 10px 12px 20px; }
+}
+
+/* paper card upgraded to your green + silver theme */
+.paper{
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 18px;
+  overflow: hidden;
   position: relative;
+
+  border: 2px solid rgba(192, 192, 192, 0.904);
+  box-shadow: 0 0 10px rgba(10, 10, 9, 0.788),
+              0 14px 10px rgba(0,0,0, 0.815);
+}
+
+/* TOP ACTIONS */
+.top-actions{
+  padding: 12px 12px 0;
+}
+
+/* Back button -> your theme */
+.back-btn{
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  height: 42px;
-  padding: 0 22px 0 28px;   /* left a bit bigger */
-  border-radius: 12px;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 14px;
 
-  background: #e7e7e7;
-  color: #111827;
-  font-weight: 800;
+  background: linear-gradient(90deg, var(--g-dark), var(--g-mid));
+  border: 2px solid rgba(192, 192, 192, 0.904);
+
+  color:#fff;
+  font-weight: 950;
   text-decoration: none;
+  letter-spacing:.04em;
 
-  border: 1px solid rgba(0,0,0,.18);
-  box-shadow:
-    0 6px 14px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.65);
+  box-shadow: 0 0 10px rgba(10,10,9,.788),
+              0 14px 10px rgba(0,0,0,.815);
+}
+.back-btn:active{ transform: scale(.99); opacity: .92; }
+
+.top-actions-line{
+  height: 2px;
+  margin: 12px 12px 0;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--g-dark), var(--g-mid));
+  opacity: .9;
 }
 
-/* left arrow tip */
-.back-btn::before{
-  content:"";
-  position:absolute;
-  left: -14px;
-  width: 0; height: 0;
-  border-top: 21px solid transparent;
-  border-bottom: 21px solid transparent;
-  border-right: 14px solid #e7e7e7; /* same as button */
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,.16));
-}
-
-/* hover/active */
-.back-btn:hover{
-  transform: translateY(-1px);
-}
-.back-btn:active{
-  transform: translateY(0px);
-  opacity: .92;
-}
-
-/* Mobile adjustments */
-@media (max-width:520px){
-  .top-actions{ padding: 10px 12px 0; }
-  .top-actions-line{ margin: 10px 12px 0; }
-  .back-btn{ height: 40px; padding: 0 18px 0 24px; font-size: 13px; }
-  .back-btn::before{
-    left: -13px;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-right: 13px solid #e7e7e7;
-  }
-}
-
-  /* header like sample */
-  .head{
+/* header -> green theme */
+.head{
   position: relative;
-  padding: 16px 18px 14px;   /* ⬅️ បន្ថយ top padding */
-  border-bottom: 1px solid var(--line);
-
-  background: linear-gradient(
-  90deg,
-  rgba(0,65,130,.95),
-  rgba(5,69,133,.82)
-);
-
+  padding: 16px 18px 14px;
   color: #fff;
-  /* ✅ align ជាមួយ paper */
+
+  background: linear-gradient(90deg, var(--g-dark), var(--g-mid));
+  border-top: 1px solid rgba(255,255,255,.10);
+  border-bottom: 1px solid rgba(0,0,0,.18);
+  box-shadow: 0 8px 24px rgba(0,0,0,.20);
+}
+.head-inner{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 16px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  min-width: 220px;
+}
+.brand-logo{
+  width:54px;height:54px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.18);
+  border: 2px solid rgba(192, 192, 192, 0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex: 0 0 auto;
+
+  box-shadow: 0 0 10px rgba(10,10,9,.45),
+              0 10px 18px rgba(0,0,0,.35);
+}
+.brand-logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.brand-title{
+  line-height: 1.05;
+  font-weight: 950;
+  letter-spacing: .02em;
+  font-size: 20px;
 }
 
-  .head-inner{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap: 16px;
-  }
+.contact{
+  text-align:right;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: .95;
+  max-width: 360px;
+  color: #ffffff;
+}
+.contact .row{ display:flex; gap:8px; justify-content:flex-end; }
+.contact b{ font-weight: 900; }
+.contact .muted{ color: rgba(255,255,255,.88) !important; }
 
-  .brand{
-    display:flex;
-    align-items:center;
-    gap: 12px;
-    min-width: 220px;
-  }
-  .brand-logo{
-    width:54px;height:54px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.18);
-    border: 1px solid rgba(255,255,255,.22);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    flex: 0 0 auto;
-  }
-  .brand-logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* body */
+.body{ padding: 18px; }
 
-  .brand-title{
-    line-height: 1.05;
-    font-weight: 950;
-    letter-spacing: .02em;
-    font-size: 20px;
-  }
-  .brand-sub{
-    margin-top: 4px;
-    font-size: 12px;
-    opacity: .92;
-    font-weight: 700;
-  }
+.top-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  align-items:start;
+}
 
-  .contact{
-    text-align:right;
-    font-size: 12px;
-    line-height: 1.4;
-    opacity: .95;
-    max-width: 360px;
-    color: #ffffff;
-  }
-  .contact .row{ display:flex; gap:8px; justify-content:flex-end; }
-  .contact b{ font-weight: 900; }
+/* info box -> slight glass inside paper */
+.box{
+  border-radius: 16px;
+  padding: 14px;
 
-  /* body */
-  .body{
-    padding: 18px;
-  }
+  background: rgba(0,0,0,.03);
+  border: 2px solid rgba(192, 192, 192, 0.45);
+}
+.box h4{
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #111827;
+  font-weight: 950;
+}
 
-  .top-grid{
-    display:grid;
-    grid-template-columns: 1fr; /* ✅ DATE removed */
-    gap: 14px;
-    align-items:start;
-  }
-
-  .box{
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 14px;
-    background: #fbfbfb;
-  }
-
-  .box h4{
-    margin: 0 0 10px;
-    font-size: 13px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #111827;
-  }
-
-  .kv{
+.kv{
   display: grid;
-  grid-template-columns: 1fr auto; /* ✅ label អោយវែង, value auto -> ទៅស្ដាំ */
+  grid-template-columns: 1fr auto;
   gap: 10px 18px;
   font-size: 13px;
   color: #111827;
   align-items: center;
 }
-
 @media (max-width: 520px){
-  .kv{
-    grid-template-columns: 120px 1fr; /* still 2 columns on phone */
-  }
+  .kv{ grid-template-columns: 120px 1fr; }
 }
-  .k{ color: #374151; font-weight: 800; }
-  .v{
+.k{ color: #374151; font-weight: 900; }
+
+.v{
   color: #111827;
-  font-weight: 700;
+  font-weight: 900;
   position: relative;
   display: inline-block;
   padding-bottom: 4px;
 
-  justify-self: end;     /* ✅ value ទៅចុងស្ដាំ */
-  text-align: right;     /* ✅ អក្សរ align ស្ដាំ */
-  min-width: 90px;      /* ✅ អោយ column value មានទំហំស្អាត */
+  justify-self: end;
+  text-align: right;
+  min-width: 90px;
 }
-
 .v::after{
   content: "";
   position: absolute;
@@ -232,84 +205,89 @@
   bottom: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, var(--c1), var(--c2));
+  background: linear-gradient(90deg, var(--g-dark), var(--g-mid));
   border-radius: 99px;
   opacity: .85;
 }
 
-
-  .sep{
-    height: 2px;
-    background: linear-gradient(90deg, var(--c1), var(--c2));
-    border-radius: 99px;
-    margin: 16px 0;
-    opacity: .85;
-  }
-
-  .subject{
-    margin-top: 4px;
-    font-size: 13px;
-    font-weight: 950;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-  }
-
-  .para{
-    font-size: 13px;
-    line-height: 1.7;
-    color: #111827;
-    margin-top: 10px;
-  }
-
-  .muted{ color: var(--mut); }
-  .head .contact .muted{
-  color: rgba(255,255,255,.88) !important;
+.sep{
+  height: 2px;
+  background: linear-gradient(90deg, var(--g-dark), var(--g-mid));
+  border-radius: 99px;
+  margin: 16px 0;
+  opacity: .9;
 }
 
-  .sig{
-    margin-top: 20px;
-    display:grid;
-    gap: 10px;
-    max-width: 520px;
-  }
-  .sig .line{
-    border-bottom: 2px solid #111827;
-    height: 24px;
-    width: 100%;
-  }
+.subject{
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color:#0b2b55;
+}
 
-  /* footer band like sample */
-  .foot{
-    padding: 12px 18px;
-    border-top: 1px solid var(--line);
-    background: #f6f7f7;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    font-size: 12px;
-    color: #111827;
-  }
-  .foot .badge{
-    border: 1px solid rgba(0,65,130,.22);
-    background: rgba(5,69,133,.10);
-    color: #004182;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-weight: 900;
-  }
+.para{
+  font-size: 13px;
+  line-height: 1.7;
+  color: #111827;
+  margin-top: 10px;
+}
+.muted{ color: var(--mut); }
+
+/* signature */
+.sig{
+  margin-top: 20px;
+  display:grid;
+  gap: 10px;
+  max-width: 520px;
+}
+.sig .line{
+  border-bottom: 2px solid #111827;
+  height: 24px;
+  width: 100%;
+}
+
+/* footer band -> your theme */
+.foot{
+  padding: 12px 18px;
+  border-top: 1px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.03);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #111827;
+}
+.foot .badge{
+  background: linear-gradient(90deg, var(--g-dark), var(--g-mid));
+  border: 2px solid rgba(192, 192, 192, 0.904);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 950;
+
+  box-shadow: 0 0 10px rgba(10,10,9,.55),
+              0 10px 14px rgba(0,0,0,.25);
+}
+
+/* performance: disable blur on android */
+.android-no-blur .paper{
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
 </style>
 
 <div class="ct-wrap">
   <div class="paper">
+
     <!-- TOP ACTIONS -->
-<div class="top-actions">
-  <a class="back-btn" href="{% url 'quick_loan' %}">
-    Back
-  </a>
-</div>
-<div class="top-actions-line"></div>
+    <div class="top-actions">
+      <a class="back-btn" href="{% url 'quick_loan' %}">Back</a>
+    </div>
+    <div class="top-actions-line"></div>
 
     <!-- HEADER -->
     <div class="head">
@@ -317,7 +295,6 @@
 
         <div class="brand">
           <div class="brand-logo">
-            {# ✅ later you will replace this file name with your logo #}
             <img src="{% static 'img/logo.webp' %}" alt="Logo">
           </div>
           <div>
@@ -334,7 +311,6 @@
 
     <!-- BODY -->
     <div class="body">
-
       <div class="top-grid">
         <div class="box">
           <h4>To</h4>
@@ -350,7 +326,7 @@
             <div class="v">{{ current_living|default:"—" }}</div>
 
             <div class="k">Loan amount</div>
-            <div class="v">PHP {{ amount|default:"0.00" }}</div>
+            <div class="v">PKR {{ amount|default:"0.00" }}</div>
 
             <div class="k">Terms</div>
             <div class="v">{{ term_months|default:"—" }} months</div>
@@ -359,7 +335,7 @@
             <div class="v">0.05%</div>
 
             <div class="k">Monthly repayment</div>
-            <div class="v">PHP {{ monthly_repayment|default:"0.00" }}</div>
+            <div class="v">PKR {{ monthly_repayment|default:"0.00" }}</div>
           </div>
         </div>
       </div>
@@ -402,7 +378,6 @@
         <div class="line"></div>
         <div class="muted" style="font-size:12px;">Authorized Company Signature</div>
       </div>
-
     </div>
 
     <!-- FOOTER -->
@@ -413,4 +388,14 @@
 
   </div>
 </div>
+
+<script>
+/* ✅ Detect Android and disable blur if needed */
+(function(){
+  var ua = (navigator.userAgent || "").toLowerCase();
+  if(ua.includes("android")){
+    document.documentElement.classList.add("android-no-blur");
+  }
+})();
+</script>
 {% endblock %}

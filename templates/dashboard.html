@@ -209,38 +209,73 @@
     transform: translateY(-110%);
   }
 /* ===== Welcome Slide Text (RIGHT -> LEFT, fit between bell and card-left) ===== */
-.topbar-inner{ position:relative; } /* already have, keep */
-
-/* place marquee as overlay so it won't break layout */
 .welcome-slider{
-  position: absolute;
-  left: 22px;          /* ✅ stop at left edge of profile card */
-  right: 58px;         /* ✅ start after notification icon (adjust if needed) */
-  top: 50%;
-  transform: translateY(-50%);
-  height: 20px;
-  overflow: hidden;
+  position:absolute;
+  left:22px;
+  right:58px;
+  top:50%;
+  transform:translateY(-50%);
+
   display:flex;
   align-items:center;
-  pointer-events:none; /* ✅ not block bell click */
+  justify-content:center;   /* ✅ center it */
+
+  pointer-events:none;
 }
 
-/* track */
+/* make top text background look like your buttons */
 .welcome-track{
-  white-space: nowrap;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+
   color:#fff;
   font-weight:900;
-  font-size:14px;
-  display:inline-block;
+  font-size:10px;        /* ✅ smaller text */
+  letter-spacing:.02em;
 
-  /* ✅ show fast within 1.5s then keep looping */
-  animation: slideText 10s linear 0s infinite;
+  padding:2px 10px;      /* ✅ thinner height */
+  line-height:1;
+
+  border-radius:999px;
+
+  /* thinner visual weight */
+  background: linear-gradient(90deg, var(--g-dark), var(--g-bright));
+  border:1px solid rgba(192,192,192,.6);   /* ✅ thinner border */
+
+  box-shadow:
+    0 0 6px rgba(10,10,9,.6);              /* ✅ reduce heavy shadow */
+
+  max-width:100%;
+  overflow:hidden;
+
+  opacity:0;
+  transform:translateY(6px);
 }
 
-/* right -> left */
-@keyframes slideText{
-  0%   { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+.welcome-track.show{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .35s ease, transform .35s ease;
+}
+
+.welcome-dot{
+  width:6px;height:6px;border-radius:999px;
+  background: rgba(255,255,255,.75);
+  box-shadow: 0 0 10px rgba(107,255,42,.55);
+  flex: 0 0 auto;
+  opacity:.9;
+}
+
+.welcome-text{
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
+
+/* mobile tighten */
+@media (max-width: 420px){
+  .welcome-track{ font-size:12px; padding: 4px 8px; }
 }
 
   .topbar-inner{
@@ -759,9 +794,10 @@
   <div class="topbar-inner">
 <!-- Left side: Logout button, aligned with left profile card edge -->
 <div class="topbar-left" style="gap:8px;">
-<div class="welcome-slider">
-  <div class="welcome-track">
-    Welcome MoneyTap — Fast Approval • Secure System • Trusted Service • 24/7 Support
+<div class="welcome-slider" aria-hidden="true">
+  <div class="welcome-track" id="welcomeTrack">
+    <span class="welcome-dot"></span>
+    <span class="welcome-text" id="welcomeText">Secure System • Trusted Service • 24/7 Support</span>
   </div>
 </div>
       </form>
@@ -970,6 +1006,40 @@
 })();
 </script>
 
+<script>
+/* ===== Topbar Notice: rotate messages (bank style) ===== */
+(function(){
+  const track = document.getElementById("welcomeTrack");
+  const textEl = document.getElementById("welcomeText");
+  if(!track || !textEl) return;
+
+  const msgs = [
+    "Secure System • Trusted Service • 24/7 Support",
+    "Fast Approval • Simple Steps • Transparent Policy",
+    "Your data is protected • Verified process • Safe service"
+  ];
+
+  let i = 0;
+
+  function show(msg){
+    track.classList.remove("show");
+    // quick fade out
+    setTimeout(() => {
+      textEl.textContent = msg;
+      track.classList.add("show");
+    }, 180);
+  }
+
+  // initial
+  show(msgs[0]);
+
+  // rotate every 4s
+  setInterval(() => {
+    i = (i + 1) % msgs.length;
+    show(msgs[i]);
+  }, 4000);
+})();
+</script>
 <script>
 /* ===== Make video show/play from first load ===== */
 (function(){
