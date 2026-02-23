@@ -670,56 +670,6 @@ if(status){
     start();
   })();
   </script>
-  <script>
-    function formatStatus(s){
-    if(!s) return "ACTIVE";
-    return s
-      .toLowerCase()
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, c => c.toUpperCase());
-  }
-    async function refreshRealtime(){
-      try{
-        const r = await fetch("/api/realtime/", { cache: "no-store" });
-        const data = await r.json();
-  
-        const status = (data.status || data.account_status || "active").toLowerCase();
-  
-        // BADGE
-        const badge = document.getElementById("accStatusBadge");
-        if(badge){
-          badge.textContent = formatStatus(status);
-          badge.classList.remove("status-active","status-danger");
-          badge.classList.add(status === "active" ? "status-active" : "status-danger");
-        }
-  
-        // ALERT
-        const alertBox = document.getElementById("statusAlert");
-        if(alertBox){
-          if(status === "active"){
-            alertBox.style.display = "none";
-          }else{
-            alertBox.style.display = "block";
-            alertBox.textContent =
-            ((data.message || data.status_message || "").trim())
-? (data.message || data.status_message).trim()
-: ("Your account has been " + formatStatus(status) + ". Please contact company department!");
-          }
-        }
-  
-        // BALANCE
-        const balEl = document.querySelector("[data-balance]");
-        if(balEl && data.balance !== undefined){
-          balEl.textContent = data.balance;
-        }
-  
-      }catch(e){}
-    }
-  
-    // refreshRealtime();
-// setInterval(refreshRealtime, 2000);
-    
-  </script>
   
 </body>
 </html>
